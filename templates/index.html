@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 8rem;
+    }
+
+    form {
+      text-align: center;
+      margin-top: 4rem;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    input[type="text"] {
+      width: 300px;
+      height: 30px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    button[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      margin-top: 10px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    #shortenedUrl {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    #shortenedUrl p {
+      font-size: 14px;
+    }
+
+    #shortenedUrl a {
+      color: #4CAF50;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="flex flex-col items-center justify-center h-screen">
+    <h1 class="text-3xl mt-16">URL Shortener</h1>
+    <form id="urlForm" class="mt-8">
+      <label for="longUrlInput" class="font-bold">Long URL:</label>
+      <br>
+      <input type="text" id="longUrlInput" name="longUrl" placeholder="Enter a long URL" class="w-72 h-10 px-3 border border-gray-300 rounded mt-2 text-sm focus:outline-none focus:ring focus:border-blue-500">
+      <br>
+      <button type="submit" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-200">Shorten</button>
+    </form>
+
+    <div id="shortenedUrl" class="mt-8"></div>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      $('#urlForm').submit(function(event) {
+        event.preventDefault();
+
+        var longUrl = $('#longUrlInput').val();
+
+        // Create the JSON body
+        var requestBody = {
+          long_url: longUrl
+        };
+
+        // Send the POST request
+        $.ajax({
+          url: '/shorten',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(requestBody),
+          success: function(response) {
+            // Display the shortened URL
+            var shortenedUrl = response.short_url;
+            var redirectUrl = '/url/' + shortenedUrl; // Append "/url/" prefix
+            $('#shortenedUrl').html('<p>Shortened URL: <a href="' + redirectUrl + '">' + redirectUrl + '</a></p>');
+          },
+          error: function(xhr, status, error) {
+            console.log(error);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
